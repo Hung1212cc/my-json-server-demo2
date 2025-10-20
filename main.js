@@ -307,158 +307,198 @@ document.addEventListener('click', function (e) {
       });
   }
 });
-// ===================== ADMIN PRODUCT 
-    const productList = document.getElementById('product-list');
-    const openAddProductModal = document.getElementById('open-add-product-modal');
-    const productModal = document.getElementById('product-modal');
-    const productForm = document.getElementById('product-form');
-    const productIdInput = document.getElementById('product-id');
-    const productNameInput = document.getElementById('product-name');
-    const productPriceInput = document.getElementById('product-price');
-    const productImageInput = document.getElementById('product-image');
-    const productCategoryInput = document.getElementById('product-category');
-    const productHotInput = document.getElementById('product-hot');
-    const productDescriptionInput = document.getElementById('product-description');
-    const closeModalBtn = document.getElementById('close-form-btn');
+// ===================== ADMIN PRODUCT ===================== //
+const productList = document.getElementById('product-list');
+const openAddProductModal = document.getElementById('open-add-product-modal');
+const productModal = document.getElementById('product-modal');
+const productForm = document.getElementById('product-form');
+const productIdInput = document.getElementById('product-id');
+const productNameInput = document.getElementById('product-name');
+const productPriceInput = document.getElementById('product-price');
+const productCategoryInput = document.getElementById('product-category');
+const productHotInput = document.getElementById('product-hot');
+const productDescriptionInput = document.getElementById('product-description');
+const closeModalBtn = document.getElementById('close-form-btn');
+const productImageInput = document.getElementById('product-image');
+const imagePreview = document.getElementById('image-preview');
 
-    class AdminProduct {
-      constructor(id, name, price, image, category, hot, description) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.image = image;
-        this.category = category;
-        this.hot = hot;
-        this.description = description;
-      }
-      //render giao diện
-      render() {
-        return `
-          <tr>
-            <td>${this.id}</td>
-            <td>${this.name}</td>
-            <td>${this.price.toLocaleString('vi-VN')} ₫</td>
-            <td><img src="${this.image}" style="width:60px; border-radius:6px"></td>
-            <td>${this.category}</td>
-            <td>${this.hot ? "🔥" : ""}</td>
-            <td>${this.description}</td>
-            <td>
-              <button class="action-button edit-button" data-id="${this.id}" title="Sửa">Sửa</button>
-              <button class="action-button delete-button" data-id="${this.id}" title="Xóa">Xóa</button>
-            </td>
-          </tr>
-        `;
-      }
-    }
-    // ===================== Hiển thị danh sách sản phẩm ===================== //
-    function renderProductList() {
-      const productTbody = document.getElementById('product-tbody');
-      if (!productTbody) return;
+// Class sản phẩm admin
+class AdminProduct {
+  constructor(id, name, price, image, category, hot, description) {
+    this.id = id;
+    this.name = name;
+    this.price = price;
+    this.image = image;
+    this.category = category;
+    this.hot = hot;
+    this.description = description;
+  }
 
-      fetch('http://localhost:3000/products')
-        .then(res => res.json())
-        .then(products => {
-          let rows = "";
-          products.forEach(item => {
-            const p = new AdminProduct(
-              item.id,
-              item.name,
-              item.price,
-              item.image,
-              item.category,
-              item.hot,
-              item.description
-            );
-            rows += p.render();
-          });
-          productTbody.innerHTML = rows;
-        })
-        .catch(err => console.error("Lỗi tải sản phẩm:", err));
+  render() {
+    return `
+      <tr>
+        <td>${this.id}</td>
+        <td>${this.name}</td>
+        <td>${this.price.toLocaleString('vi-VN')} ₫</td>
+        <td><img src="${this.image}" style="width:60px; border-radius:6px"></td>
+        <td>${this.category}</td>
+        <td>${this.hot ? "🔥" : ""}</td>
+        <td>${this.description}</td>
+        <td>
+          <button class="action-button edit-button" data-id="${this.id}" title="Sửa">Sửa</button>
+          <button class="action-button delete-button" data-id="${this.id}" title="Xóa">Xóa</button>
+        </td>
+      </tr>
+    `;
+  }
+}
+
+// Hiển thị danh sách sản phẩm
+function renderProductList() {
+  const productTbody = document.getElementById('product-tbody');
+  if (!productTbody) return;
+
+  fetch('http://localhost:3000/products')
+    .then(res => res.json())
+    .then(products => {
+      let rows = "";
+      products.forEach(item => {
+        const p = new AdminProduct(
+          item.id,
+          item.name,
+          item.price,
+          item.image,
+          item.category,
+          item.hot,
+          item.description
+        );
+        rows += p.render();
+      });
+      productTbody.innerHTML = rows;
+    })
+    .catch(err => console.error("Lỗi tải sản phẩm:", err));
+}
+renderProductList();
+
+// Mở modal thêm sản phẩm
+openAddProductModal.addEventListener('click', () => {
+  productForm.setAttribute('data-mode', 'add');
+  productForm.reset();
+  imagePreview.src = '';
+  imagePreview.style.display = 'none';
+  productModal.style.display = 'flex';
+});
+
+// Đóng modal
+closeModalBtn.addEventListener('click', () => {
+  productModal.style.display = 'none';
+  productForm.removeAttribute('data-mode');
+  productForm.reset();
+  imagePreview.src = '';
+  imagePreview.style.display = 'none';
+});
+
+// Đóng modal khi click ngoài
+window.addEventListener('click', (event) => {
+  if (event.target === productModal) {
+    productModal.style.display = 'none';
+    productForm.removeAttribute('data-mode');
+    productForm.reset();
+    imagePreview.src = '';
+    imagePreview.style.display = 'none';
+  }
+});
+
+// Preview ảnh khi chọn file
+productImageInput.addEventListener('change', function() {
+  const file = this.files[0];
+  if(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      imagePreview.src = e.target.result;
+      imagePreview.style.display = 'block';
     }
-    renderProductList();
-    // ===================== MỞ MODAL ===================== //
-    openAddProductModal.addEventListener('click', () => {
-      productModal.style.display = 'flex';
-      productForm.setAttribute('data-mode', 'add');
-      productForm.reset();
-    });
-    // ===================== ĐÓNG MODAL ===================== //
-    closeModalBtn.addEventListener('click', () => {
+    reader.readAsDataURL(file);
+  }
+});
+
+// Thêm / Sửa sản phẩm
+productForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  const image = productImageInput.files[0] ? imagePreview.src : imagePreview.src;
+
+  const productData = {
+    id: productIdInput.value || Date.now().toString(),
+    name: productNameInput.value,
+    price: parseFloat(productPriceInput.value),
+    image: image,
+    category: productCategoryInput.value,
+    hot: productHotInput.checked,
+    description: productDescriptionInput.value
+  };
+
+  const isEdit = productForm.getAttribute('data-mode') === 'edit';
+  const url = isEdit
+    ? `http://localhost:3000/products/${productData.id}`
+    : 'http://localhost:3000/products';
+  const method = isEdit ? 'PUT' : 'POST';
+
+  fetch(url, {
+    method: method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(productData)
+  })
+    .then(() => {
       productModal.style.display = 'none';
       productForm.removeAttribute('data-mode');
       productForm.reset();
-    });
-    window.addEventListener('click', (event) => {
-      if (event.target === productModal) {
-        productModal.style.display = 'none';
-        productForm.removeAttribute('data-mode');
-        productForm.reset();
-      }
-    });
-    // ===================== THÊM / SỬA SẢN PHẨM ===================== //
-    productForm.addEventListener('submit', (event) => {
-      event.preventDefault();
+      imagePreview.src = '';
+      imagePreview.style.display = 'none';
+      renderProductList();
+    })
+    .catch(err => console.error("Lỗi khi lưu sản phẩm:", err));
+});
 
-      const productData = {
-        id: productIdInput.value || Date.now().toString(),
-        name: productNameInput.value,
-        price: parseFloat(productPriceInput.value),
-        image: productImageInput.value,
-        category: productCategoryInput.value,
-        hot: productHotInput.checked,
-        description: productDescriptionInput.value
-      };
-      const isEdit = productForm.getAttribute('data-mode') === 'edit';
-      const url = isEdit
-        ? `http://localhost:3000/products/${productData.id}`
-        : 'http://localhost:3000/products';
-      const method = isEdit ? 'PUT' : 'POST';
-      fetch(url, {
-        method: method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(productData)
+// Sửa sản phẩm
+productList.addEventListener('click', (event) => {
+  const btn = event.target.closest('.edit-button');
+  if (btn) {
+    const id = btn.getAttribute('data-id');
+    productForm.setAttribute('data-mode', 'edit');
+    fetch(`http://localhost:3000/products/${id}`)
+      .then(res => res.json())
+      .then(data => {
+        productIdInput.value = data.id;
+        productNameInput.value = data.name;
+        productPriceInput.value = data.price;
+        productCategoryInput.value = data.category;
+        productHotInput.checked = data.hot;
+        productDescriptionInput.value = data.description;
+
+        // Hiển thị ảnh cũ
+        imagePreview.src = data.image;
+        imagePreview.style.display = 'block';
+
+        productModal.style.display = "flex";
       })
-        .then(() => {
-          productModal.style.display = 'none';
-          productForm.removeAttribute('data-mode');
-          productForm.reset();
-          renderProductList(); // Cập nhật danh sách
-        })
-        .catch(err => console.error("Lỗi khi lưu sản phẩm:", err));
-    });
-    // ===================== SỬA SẢN PHẨM ===================== //
-    productList.addEventListener('click', (event) => {
-      const btn = event.target.closest('.edit-button');
-      if (btn) {
-        const id = btn.getAttribute('data-id');
-        productForm.setAttribute('data-mode', 'edit');
-        fetch(`http://localhost:3000/products/${id}`)
-          .then(res => res.json())
-          .then(data => {
-            productIdInput.value = data.id;
-            productNameInput.value = data.name;
-            productPriceInput.value = data.price;
-            productImageInput.value = data.image;
-            productCategoryInput.value = data.category;
-            productHotInput.checked = data.hot;
-            productDescriptionInput.value = data.description;
-            productModal.style.display = "flex";
-          })
-          .catch(err => console.error("Lỗi khi tải sản phẩm:", err));
-      }
-    });
-    // ===================== XÓA SẢN PHẨM ===================== //
-    productList.addEventListener('click', (event) => {
-      const btn = event.target.closest('.delete-button');
-      if (btn) {
-        const id = btn.getAttribute('data-id');
-        if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
-          fetch(`http://localhost:3000/products/${id}`, { method: 'DELETE' })
-            .then(() => renderProductList())
-            .catch(err => console.error("Lỗi khi xóa sản phẩm:", err));
-        }
-      }
-    });
+      .catch(err => console.error("Lỗi khi tải sản phẩm:", err));
+  }
+});
+
+// Xóa sản phẩm
+productList.addEventListener('click', (event) => {
+  const btn = event.target.closest('.delete-button');
+  if (btn) {
+    const id = btn.getAttribute('data-id');
+    if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
+      fetch(`http://localhost:3000/products/${id}`, { method: 'DELETE' })
+        .then(() => renderProductList())
+        .catch(err => console.error("Lỗi khi xóa sản phẩm:", err));
+    }
+  }
+});
+
 // ================= Admin: Hiển thị danh sách sản phẩm =================
 function renderProductList() {
   const productTbody = document.getElementById('product-tbody');
@@ -484,3 +524,37 @@ function renderProductList() {
     .catch(err => console.error("Lỗi tải sản phẩm:", err));
 }
 renderProductList();
+
+
+// Lấy các phần tử
+const closeFormBtn = document.getElementById('close-form-btn');
+// Mở modal
+openAddProductModal.addEventListener('click', () => {
+  productModal.style.display = 'block';
+});
+
+// Đóng modal
+closeFormBtn.addEventListener('click', () => {
+  productModal.style.display = 'none';
+  // Reset form và ẩn ảnh preview
+  document.getElementById('product-form').reset();
+  imagePreview.src = '';
+  imagePreview.style.display = 'none';
+});
+
+// Preview ảnh khi chọn file
+productImageInput.addEventListener('change', function() {
+  const file = this.files[0];
+  if(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      imagePreview.src = e.target.result;
+      imagePreview.style.display = 'block';
+    }
+    reader.readAsDataURL(file);
+  } else {
+    imagePreview.src = '';
+    imagePreview.style.display = 'none';
+  }
+});
+
