@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Danh sách sản phẩm - SHOP CỦA HÙNG</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<section class="banner">
+  <div class="banner-content">
+    <h2>Danh sách sản phẩm</h2>
+    <p>Khám phá tất cả sản phẩm laptop và điện thoại chính hãng tại SHOP CỦA HÙNG.</p>
+  </div>
+</section>
+<div class="filter-bar">
+  <div class="search-box">
+    <input type="text" id="search-input" placeholder="Tìm sản phẩm...">
+    <button type="button" id="search-btn">🔍</button>
+  </div>
+  <select id="sort-price">
+    <option value="">Sắp xếp theo giá</option>
+    <option value="asc">Giá tăng dần</option>
+    <option value="desc">Giá giảm dần</option>
+  </select>
+</div>
+<div class="container">
+  <div id="all-products" class="product-list"></div>
+</div>
+<script src="main.js"></script>
+</body>
+</html>

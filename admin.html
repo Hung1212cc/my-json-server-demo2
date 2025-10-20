@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Shop Hùng</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <h1>🛒 Admin Shop của Hùng</h1>
+
+  <!-- Nút mở modal -->
+  <button id="open-add-product-modal">Thêm sản phẩm</button>
+
+  <!-- Form popup modal -->
+  <div class="product-form-container" id="product-modal">
+    <div class="form-content">
+      <button class="close-btn" id="close-form-btn">&times;</button>
+      <h2>Thêm / Sửa sản phẩm</h2>
+      <form id="product-form" data-mode="add">
+        <input type="hidden" id="product-id" value="">  
+        <label for="product-name">Tên sản phẩm:</label>
+        <input type="text" id="product-name" required>
+        <label for="product-price">Giá:</label>
+        <input type="number" id="product-price" required>
+        <label for="product-image">Ảnh (URL):</label>
+        <input type="text" id="product-image">
+        <label for="product-category">Danh mục:</label>
+        <select id="product-category" required>
+
+          <option value="Điện thoại">Điện thoại</option>
+          <option value="Laptop">Laptop</option>
+        </select>
+        <label>
+          <input type="checkbox" id="product-hot"> Hot
+        </label>
+        <br>
+        <label for="product-description">Mô tả:</label>
+        <textarea id="product-description"></textarea>
+        <button type="submit">Lưu sản phẩm</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Danh sách sản phẩm -->
+  <div class="product-list-container">
+    <h2>Danh sách sản phẩm</h2>
+    <table id="product-list">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tên</th>
+          <th>Giá</th>
+          <th>Ảnh</th>
+          <th>Danh mục</th>
+          <th>Hot</th>
+          <th>Mô tả</th>
+          <th>Sửa/Xóa</th>
+        </tr>
+      </thead>
+      <tbody id="product-tbody">
+      </tbody>
+    </table>
+  </div>
+  <script src="main.js"></script>
+</body>
+</html>
